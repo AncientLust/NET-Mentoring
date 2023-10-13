@@ -35,19 +35,23 @@ public class Program
         ArgumentNullException.ThrowIfNull(buildPath);
         
         var pluginsPath = Path.Combine(buildPath, "Plugins");
-        var files = Directory.GetFiles(pluginsPath);
+        var directories = Directory.GetDirectories(pluginsPath);
 
-        foreach (var file in files)
+        foreach (var directory in directories)
         {
-            var assembly = Assembly.LoadFrom(file);
-            var providerTypes = assembly.GetTypes();
-
-            foreach (var type in providerTypes)
+            var files = Directory.GetFiles(directory);
+            foreach (var file in files)
             {
-                if (type.IsAssignableTo(typeof(IConfigurationProvider)) && 
-                    Activator.CreateInstance(type) is IConfigurationProvider configProviderInstance)
+                var assembly = Assembly.LoadFrom(file);
+                var providerTypes = assembly.GetTypes();
+
+                foreach (var type in providerTypes)
                 {
-                    yield return configProviderInstance;
+                    if (type.IsAssignableTo(typeof(IConfigurationProvider)) &&
+                        Activator.CreateInstance(type) is IConfigurationProvider configProviderInstance)
+                    {
+                        yield return configProviderInstance;
+                    }
                 }
             }
         }
