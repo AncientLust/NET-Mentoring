@@ -1,31 +1,31 @@
-﻿using Reflection.Attributes;
+﻿using PluginContracts;
 
 namespace Reflection;
 
 public class AppSettings
 {
-    [FileConfigurationItem("IntValueFromFile")]
+    [Configuration("IntValueFromFile", "FileConfigurationProvider")]
     public int IntValueFromFile { get; set; }
 
-    [FileConfigurationItem("StringValueFromFile")]
+    [Configuration("StringValueFromFile", "FileConfigurationProvider")]
     public string? StringValueFromFile { get; set; }
 
-    [FileConfigurationItem("FloatValueFromFile")]
+    [Configuration("FloatValueFromFile", "FileConfigurationProvider")]
     public float FloatValueFromFile { get; set; }
 
-    [FileConfigurationItem("TimeSpanValueFromFile")]
+    [Configuration("TimeSpanValueFromFile", "FileConfigurationProvider")]
     public TimeSpan TimeSpanValueFromFile { get; set; }
 
-    [ConfigurationManagerItem("IntValueFromConfig")]
+    [Configuration("IntValueFromConfig", "ConfigurationManagerProvider")]
     public int IntValueFromConfig { get; set; }
 
-    [ConfigurationManagerItem("StringValueFromConfig")]
+    [Configuration("StringValueFromConfig", "ConfigurationManagerProvider")]
     public string? StringValueFromConfig { get; set; }
 
-    [ConfigurationManagerItem("FloatValueFromConfig")]
+    [Configuration("FloatValueFromConfig", "ConfigurationManagerProvider")]
     public float FloatValueFromConfig { get; set; }
 
-    [ConfigurationManagerItem("TimeSpanValueFromConfig")]
+    [Configuration("TimeSpanValueFromConfig", "ConfigurationManagerProvider")]
     public TimeSpan TimeSpanValueFromConfig { get; set; }
 
     public void PrintSettings(string prefixMessage, AppSettings settings)

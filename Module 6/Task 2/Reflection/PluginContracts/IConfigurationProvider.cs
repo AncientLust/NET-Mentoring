@@ -1,4 +1,4 @@
-﻿namespace Reflection;
+﻿namespace PluginContracts;
 
 public interface IConfigurationProvider
 {

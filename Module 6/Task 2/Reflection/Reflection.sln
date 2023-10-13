@@ -5,9 +5,11 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reflection", "Reflection\Reflection.csproj", "{C85F7232-00D5-40E3-B07A-CBF9D95835A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileConfigurationProvider", "FileConfigurationProvider\FileConfigurationProvider.csproj", "{53B0C23D-9A08-4EC2-977B-FC0B66A41624}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileConfigurationProvider", "FileConfigurationProvider\FileConfigurationProvider.csproj", "{53B0C23D-9A08-4EC2-977B-FC0B66A41624}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationManagerProvider", "ConfigurationManagerProvider\ConfigurationManagerProvider.csproj", "{E86F4F0D-CF08-4299-AFB8-7D1FC47DF73C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigurationManagerProvider", "ConfigurationManagerProvider\ConfigurationManagerProvider.csproj", "{E86F4F0D-CF08-4299-AFB8-7D1FC47DF73C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginContracts", "PluginContracts\PluginContracts.csproj", "{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,26 @@ Global
 		{E86F4F0D-CF08-4299-AFB8-7D1FC47DF73C}.Release|x64.Build.0 = Release|Any CPU
 		{E86F4F0D-CF08-4299-AFB8-7D1FC47DF73C}.Release|x86.ActiveCfg = Release|Any CPU
 		{E86F4F0D-CF08-4299-AFB8-7D1FC47DF73C}.Release|x86.Build.0 = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Debug|x86.Build.0 = Debug|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|ARM.Build.0 = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|ARM64.Build.0 = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|x64.Build.0 = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{9A27EF29-2408-44FF-B1A2-91B5BA499DFF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

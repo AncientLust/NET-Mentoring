@@ -1,19 +1,20 @@
-﻿using Reflection;
-using Reflection.Attributes;
+﻿using PluginContracts;
 using System.Reflection;
 
 namespace FileConfigurationProvider;
 
 public class FileConfigurationProvider : IConfigurationProvider
 {
+    private const string FilePath = @"ConfigFile.json";
+
     public void Load(object obj)
     {
         foreach (var property in obj.GetType().GetProperties())
         {
-            if (property.GetCustomAttribute<FileConfigurationItemAttribute>()
-                is FileConfigurationItemAttribute fileAttr)
+            if (property.GetCustomAttribute<ConfigurationAttribute>() is { } configAttr &&
+                configAttr.ProviderName == nameof(FileConfigurationProvider))
             {
-                LoadAttributeFromFile(property, fileAttr, obj);
+                LoadAttributeFromFile(property, configAttr, obj);
             }
         }
     }
@@ -22,20 +23,20 @@ public class FileConfigurationProvider : IConfigurationProvider
     {
         foreach (var property in obj.GetType().GetProperties())
         {
-            if (property.GetCustomAttribute<FileConfigurationItemAttribute>()
-                is FileConfigurationItemAttribute fileAttr)
+            if (property.GetCustomAttribute<ConfigurationAttribute>() is { } configAttr &&
+                configAttr.ProviderName == nameof(FileConfigurationProvider))
             {
-                SaveAttributeToFile(property, fileAttr, obj);
+                SaveAttributeToFile(property, configAttr, obj);
             }
         }
     }
 
-    private void LoadAttributeFromFile(PropertyInfo property, FileConfigurationItemAttribute fileAttribute, object obj)
+    private void LoadAttributeFromFile(PropertyInfo property, ConfigurationAttribute fileAttribute, object obj)
     {
-        if (!File.Exists(fileAttribute.FilePath))
-            throw new FileNotFoundException("Cannot find file: " + fileAttribute.FilePath);
+        if (!File.Exists(FilePath))
+            throw new FileNotFoundException("Cannot find file: " + FilePath);
 
-        var jsonString = File.ReadAllText(fileAttribute.FilePath);
+        var jsonString = File.ReadAllText(FilePath);
         var settingsDict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
         if (settingsDict is not null && settingsDict.TryGetValue(fileAttribute.SettingName, out var settingValue))
@@ -51,13 +52,13 @@ public class FileConfigurationProvider : IConfigurationProvider
         }
     }
 
-    private void SaveAttributeToFile(PropertyInfo property, FileConfigurationItemAttribute fileAttribute, object obj)
+    private void SaveAttributeToFile(PropertyInfo property, ConfigurationAttribute fileAttribute, object obj)
     {
         var value = property.GetValue(obj);
         string jsonString;
-        if (File.Exists(fileAttribute.FilePath))
+        if (File.Exists(FilePath))
         {
-            var existingJsonString = File.ReadAllText(fileAttribute.FilePath);
+            var existingJsonString = File.ReadAllText(FilePath);
             var existingSettings = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(existingJsonString);
 
             if (existingSettings is not null)
@@ -75,6 +76,6 @@ public class FileConfigurationProvider : IConfigurationProvider
             });
         }
 
-        File.WriteAllText(fileAttribute.FilePath, jsonString);
+        File.WriteAllText(FilePath, jsonString);
     }
 }

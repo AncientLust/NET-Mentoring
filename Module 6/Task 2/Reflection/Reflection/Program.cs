@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PluginContracts;
 
 namespace Reflection;
 
@@ -6,40 +7,49 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var fileConfigurationProvider = LoadConfigurationProvider("Plugins/FileConfigurationProvider.dll");
-        var configurationManagerProvider = LoadConfigurationProvider("Plugins/ConfigurationManagerProvider.dll");
-
-        if (fileConfigurationProvider is not null && configurationManagerProvider is not null) 
+        var providers = LoadConfigurationProvider().ToList();
+        
+        var settings = new AppSettings
         {
-            var settings = new AppSettings();
+            IntValueFromFile = 123,
+            StringValueFromFile = "File",
+            FloatValueFromFile = 123.4f,
+            TimeSpanValueFromFile = new TimeSpan(1, 2, 3),
+            IntValueFromConfig = 321,
+            StringValueFromConfig = "Config",
+            FloatValueFromConfig = 432.1f,
+            TimeSpanValueFromConfig = new TimeSpan(3, 2, 1)
+        };
 
-            settings.IntValueFromFile = 123;
-            settings.StringValueFromFile = "File";
-            settings.FloatValueFromFile = 123.4f;
-            settings.TimeSpanValueFromFile = new TimeSpan(1, 2, 3);
+        providers.ForEach(provider => provider.Save(settings));
+        settings.PrintSettings("Saved with values", settings);
 
-            settings.IntValueFromConfig = 321;
-            settings.StringValueFromConfig = "Config";
-            settings.FloatValueFromConfig = 432.1f;
-            settings.TimeSpanValueFromConfig = new TimeSpan(3, 2, 1);
-
-            fileConfigurationProvider.Save(settings);
-            configurationManagerProvider.Save(settings);
-            settings.PrintSettings("Saved with values", settings);
-
-            settings = new AppSettings();
-
-            fileConfigurationProvider.Load(settings);
-            configurationManagerProvider.Load(settings);
-            settings.PrintSettings("\nLoaded values", settings);
-        }
+        settings = new AppSettings();
+        providers.ForEach(provider => provider.Load(settings));
+        settings.PrintSettings("\nLoaded values", settings);
     }
 
-    private static IConfigurationProvider? LoadConfigurationProvider(string assemblyPath)
+    private static IEnumerable<IConfigurationProvider> LoadConfigurationProvider()
     {
-        var assembly = Assembly.LoadFrom(assemblyPath);
-        var providerType = assembly.GetTypes().First(t => t.GetInterface(nameof(IConfigurationProvider)) != null);
+        var buildPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+        ArgumentNullException.ThrowIfNull(buildPath);
+        
+        var pluginsPath = Path.Combine(buildPath, "Plugins");
+        var files = Directory.GetFiles(pluginsPath);
 
-        return Activator.CreateInstance(providerType) as IConfigurationProvider; ;
+        foreach (var file in files)
+        {
+            var assembly = Assembly.LoadFrom(file);
+            var providerTypes = assembly.GetTypes();
+
+            foreach (var type in providerTypes)
+            {
+                if (type.IsAssignableTo(typeof(IConfigurationProvider)) && 
+                    Activator.CreateInstance(type) is IConfigurationProvider configProviderInstance)
+                {
+                    yield return configProviderInstance;
+                }
+            }
+        }
     }
 }

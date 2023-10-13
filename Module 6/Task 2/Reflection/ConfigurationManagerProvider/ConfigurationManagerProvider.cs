@@ -1,7 +1,6 @@
-﻿using Reflection;
-using Reflection.Attributes;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Configuration;
+using PluginContracts;
 
 namespace ConfigurationManagerProvider;
 
@@ -11,8 +10,8 @@ public class ConfigurationManagerProvider : IConfigurationProvider
     {
         foreach (var property in obj.GetType().GetProperties())
         {
-            if (property.GetCustomAttribute<ConfigurationManagerItemAttribute>()
-                is ConfigurationManagerItemAttribute configAttr)
+            if (property.GetCustomAttribute<ConfigurationAttribute>() is { } configAttr &&
+                configAttr.ProviderName == nameof(ConfigurationManagerProvider))
             {
                 LoadAttributeFromConfig(property, configAttr, obj);
             }
@@ -23,14 +22,15 @@ public class ConfigurationManagerProvider : IConfigurationProvider
     {
         foreach (var property in obj.GetType().GetProperties())
         {
-            if (property.GetCustomAttribute<ConfigurationManagerItemAttribute>() is ConfigurationManagerItemAttribute configAttr)
+            if (property.GetCustomAttribute<ConfigurationAttribute>() is { } configAttr &&
+                configAttr.ProviderName == nameof(ConfigurationManagerProvider))
             {
                 SaveAttributeToConfig(property, configAttr, obj);
             }
         }
     }
 
-    private void LoadAttributeFromConfig(PropertyInfo property, ConfigurationManagerItemAttribute configAttribute, object obj)
+    private void LoadAttributeFromConfig(PropertyInfo property, ConfigurationAttribute configAttribute, object obj)
     {
         var settingValue = ConfigurationManager.AppSettings[configAttribute.SettingName];
         if (settingValue is not null)
@@ -46,7 +46,7 @@ public class ConfigurationManagerProvider : IConfigurationProvider
         }
     }
 
-    private void SaveAttributeToConfig(PropertyInfo property, ConfigurationManagerItemAttribute configAttribute, object obj)
+    private void SaveAttributeToConfig(PropertyInfo property, ConfigurationAttribute configAttribute, object obj)
     {
         Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         if (configuration.AppSettings.Settings[configAttribute.SettingName] is not null)
