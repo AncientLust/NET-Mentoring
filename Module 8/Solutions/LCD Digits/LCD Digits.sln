@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCD Digits", "LCD Digits\LCD Digits.csproj", "{4E589271-A92A-41C6-B749-5385FB4AC8D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LCD Digits.Tests", "LCD Digits.Tests\LCD Digits.Tests.csproj", "{166012B1-6868-46B1-8E26-4F103D0EB482}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E589271-A92A-41C6-B749-5385FB4AC8D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E589271-A92A-41C6-B749-5385FB4AC8D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E589271-A92A-41C6-B749-5385FB4AC8D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E589271-A92A-41C6-B749-5385FB4AC8D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{166012B1-6868-46B1-8E26-4F103D0EB482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{166012B1-6868-46B1-8E26-4F103D0EB482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{166012B1-6868-46B1-8E26-4F103D0EB482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{166012B1-6868-46B1-8E26-4F103D0EB482}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {763B97E2-7D53-484B-922F-7948FCE147A2}
+	EndGlobalSection
+EndGlobal
