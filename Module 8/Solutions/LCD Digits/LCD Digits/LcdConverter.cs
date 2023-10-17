@@ -2,7 +2,7 @@
 
 public class LcdConverter
 {
-    public string Convert(int digit)
+    public string Convert(int number)
     {
         throw new NotImplementedException();
     }
