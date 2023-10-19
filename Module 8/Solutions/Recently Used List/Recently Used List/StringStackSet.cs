@@ -2,22 +2,44 @@
 
 public class StringStackSet : IStringStackSet
 {
-    public int Capacity => throw new NotImplementedException();
+    private readonly FromPreviousTask.DoublyLinkedList<string> _storage = new();
+    public int Capacity { get; }
+    public int Length => _storage.Length;
 
-    public int Length => throw new NotImplementedException();
+    public StringStackSet(int capacity)
+    {
+        Capacity = capacity;
+    }
 
     public string ElementAt(int i)
     {
-        throw new NotImplementedException();
+        return _storage.ElementAt(i);
     }
 
     public string Pop()
     {
-        throw new NotImplementedException();
+        var storageLength = _storage.Length;
+        if (storageLength == 0) throw new InvalidOperationException();
+
+        return _storage.RemoveAt(--storageLength);
     }
 
     public void Push(string item)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(item)) throw new InvalidDataException();
+
+        if (_storage.Contains(item))
+        {
+            if (Length == 1) return;
+
+            _storage.Remove(item);
+        }
+
+        _storage.Add(item);
+
+        if (Length > Capacity)
+        {
+            _storage.RemoveAt(0);
+        }
     }
 }
