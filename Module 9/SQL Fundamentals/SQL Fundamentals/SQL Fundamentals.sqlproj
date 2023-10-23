@@ -61,6 +61,8 @@
     <Folder Include="Post-deployment scripts" />
     <Folder Include="dbo\Publishing" />
     <Folder Include="dbo\Views" />
+    <Folder Include="dbo\Precedures" />
+    <Folder Include="Tests" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Person.sql" />
@@ -68,11 +70,13 @@
     <Build Include="dbo\Tables\Company.sql" />
     <Build Include="dbo\Tables\Employee.sql" />
     <Build Include="dbo\Views\EmployeeInfo.sql" />
+    <Build Include="dbo\Precedures\InsertNewEmployee.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Post-deployment scripts\Script.EntityData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Publishing\sql_fundamentals.publish.xml" />
+    <None Include="Tests\StoredProcedureTests.sql" />
   </ItemGroup>
 </Project>
