@@ -62,7 +62,7 @@ begin
             (SELECT [id] FROM dbo.Person WHERE [FirstName] = 'FirstName2'),
             'CompanyName2',
             'Position2',
-            'EmployeeName2'
+            null
         ),
         ( 
             (SELECT [id] FROM dbo.Address WHERE [ZipCode] = 'ZipCode3'), 
