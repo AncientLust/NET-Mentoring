@@ -1,7 +1,7 @@
-﻿CREATE PROCEDURE [dbo].[InsertNewEmployee]
+﻿CREATE PROCEDURE [dbo].[PrcInsertNewEmployee]
 	@EmployeeName NVARCHAR(100) = NULL,	--(optional)
-	@FirstName NVARCHAR(50),			--(optional) -- In task2 marked as optional but Person table has it not nullable (task1)
-	@LastName NVARCHAR(50),				--(optional) -- In task2 marked as optional but Person table has it not nullable (task1)
+	@FirstName NVARCHAR(50),			--(optional) -- In task3 marked as optional but Person table has it not nullable (task1)
+	@LastName NVARCHAR(50),				--(optional) -- In task3 marked as optional but Person table has it not nullable (task1)
 	@CompanyName NVARCHAR(20),			--(required)
 	@Position NVARCHAR(30) = NULL,		--(optional)
 	@Street	NVARCHAR(50),				--(required)

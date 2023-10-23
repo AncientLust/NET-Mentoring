@@ -63,6 +63,7 @@
     <Folder Include="dbo\Views" />
     <Folder Include="dbo\Precedures" />
     <Folder Include="Tests" />
+    <Folder Include="dbo\Triggers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Person.sql" />
@@ -70,7 +71,8 @@
     <Build Include="dbo\Tables\Company.sql" />
     <Build Include="dbo\Tables\Employee.sql" />
     <Build Include="dbo\Views\EmployeeInfo.sql" />
-    <Build Include="dbo\Precedures\InsertNewEmployee.sql" />
+    <Build Include="dbo\Triggers\TrInsertCompanyOnEmployeeInsert.sql" />
+    <Build Include="dbo\Precedures\PrcInsertNewEmployee.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Post-deployment scripts\Script.EntityData.sql" />
