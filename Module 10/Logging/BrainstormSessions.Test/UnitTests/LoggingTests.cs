@@ -6,27 +6,30 @@ using BrainstormSessions.Api;
 using BrainstormSessions.Controllers;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
-using log4net.Appender;
-using log4net.Config;
-using log4net.Core;
 using Moq;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using Xunit;
 
 namespace BrainstormSessions.Test.UnitTests
 {
     public class LoggingTests : IDisposable
     {
-        private readonly MemoryAppender _appender;
+        private readonly List<LogEvent> logEvents = new List<LogEvent>();
 
         public LoggingTests()
         {
-            _appender = new MemoryAppender();
-            BasicConfigurator.Configure(_appender);
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Sink(new DelegatingSink(e => logEvents.Add(e)))
+                .CreateLogger();
         }
 
         public void Dispose()
         {
-            _appender.Clear();
+            logEvents.Clear();
+            Log.CloseAndFlush();
         }
 
         [Fact]
@@ -42,8 +45,7 @@ namespace BrainstormSessions.Test.UnitTests
             var result = await controller.Index();
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Info), "Expected Info messages in the logs");
+            Assert.True(logEvents.Any(l => l.Level == LogEventLevel.Information), "Expected Info messages in the logs");
         }
 
         [Fact]
@@ -61,8 +63,7 @@ namespace BrainstormSessions.Test.UnitTests
             var result = await controller.Index(newSession);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Warn), "Expected Warn messages in the logs");
+            Assert.True(logEvents.Any(l => l.Level == LogEventLevel.Warning), "Expected Warn messages in the logs");
         }
 
         [Fact]
@@ -77,8 +78,7 @@ namespace BrainstormSessions.Test.UnitTests
             var result = await controller.CreateActionResult(model: null);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Error), "Expected Error messages in the logs");
+            Assert.True(logEvents.Any(l => l.Level == LogEventLevel.Error), "Expected Error messages in the logs");
         }
 
         [Fact]
@@ -96,8 +96,7 @@ namespace BrainstormSessions.Test.UnitTests
             var result = await controller.Index(testSessionId);
 
             // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Count(l => l.Level == Level.Debug) == 2, "Expected 2 Debug messages in the logs");
+            Assert.True(logEvents.Count(l => l.Level == LogEventLevel.Debug) == 2, "Expected 2 Debug messages in the logs");
         }
 
         private List<BrainstormSession> GetTestSessions()
@@ -118,5 +117,19 @@ namespace BrainstormSessions.Test.UnitTests
             return sessions;
         }
 
+        public class DelegatingSink : ILogEventSink
+        {
+            private readonly Action<LogEvent> _write;
+
+            public DelegatingSink(Action<LogEvent> write)
+            {
+                _write = write ?? throw new ArgumentNullException(nameof(write));
+            }
+
+            public void Emit(LogEvent logEvent)
+            {
+                _write(logEvent);
+            }
+        }
     }
 }

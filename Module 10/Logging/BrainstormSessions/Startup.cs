@@ -47,12 +47,6 @@ namespace BrainstormSessions
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            
-            Log.Debug("My DEBUG record");
-            Log.Information("My INFORMATION record");
-            Log.Warning("My WARNING record");
-            Log.Error("My ERROR record");
-            Log.Fatal("My FATAL record");
         }
 
         public async Task InitializeDatabaseAsync(IBrainstormSessionRepository repo)

@@ -2,6 +2,7 @@
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace BrainstormSessions.Controllers
 {
@@ -16,8 +17,11 @@ namespace BrainstormSessions.Controllers
 
         public async Task<IActionResult> Index(int? id)
         {
+            Log.Debug($"Method {nameof(Index)} of {nameof(SessionController)} class started");
+
             if (!id.HasValue)
             {
+                
                 return RedirectToAction(actionName: nameof(Index),
                     controllerName: "Home");
             }
@@ -34,6 +38,8 @@ namespace BrainstormSessions.Controllers
                 Name = session.Name,
                 Id = session.Id
             };
+
+            Log.Debug($"Method {nameof(Index)} of {nameof(SessionController)} class complete");
 
             return View(viewModel);
         }
