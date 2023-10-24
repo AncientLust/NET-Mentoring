@@ -47,6 +47,8 @@ namespace BrainstormSessions
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            Log.Error("Error record for email test");
         }
 
         public async Task InitializeDatabaseAsync(IBrainstormSessionRepository repo)
