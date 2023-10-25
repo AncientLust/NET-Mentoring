@@ -36,7 +36,6 @@ public class Program
 
     public static T DeserializeFromFile<T>(string filePath)
     {
-
         var options = new JsonSerializerOptions
         {
             IncludeFields = true,

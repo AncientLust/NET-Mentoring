@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Task_1_Binary_serialization;
+namespace Task_2_Custom_binary_serializer;
 
 public class Program
 {
@@ -8,24 +8,15 @@ public class Program
     {
         const string filePath = "Department.bin";
 
-        List<Employee> employees = new List<Employee>()
-        {
-            new("Mike"),
-            new("Susan"),
-            new("Stan")
-        };
+        var person = new Person("Emily", "Jane", 23);
 
-        var department = new Department("Sales", employees);
+        SerializeToFile(filePath, person);
 
-        SerializeToFile(filePath, department);
+        var deserializedPerson = DeserializeFromFile<Person>(filePath);
 
-        var deserializedDepartment = DeserializeFromFile<Department>(filePath);
-
-        Console.WriteLine($"Department name: {deserializedDepartment.DepartmentName}");
-        foreach (var employee in deserializedDepartment.Employees)
-        {
-            Console.WriteLine($"Employee name: {employee.EmployeeName}");
-        }
+        Console.WriteLine($"First name: {deserializedPerson.FirstName}");
+        Console.WriteLine($"Last name: {deserializedPerson.LastName}");
+        Console.WriteLine($"Age: {deserializedPerson.Age}");
     }
 
     public static void SerializeToFile(string filePath, object obj)

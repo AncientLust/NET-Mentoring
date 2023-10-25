@@ -6,7 +6,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var filePath = "Department.bin";
+        var filePath = "Department.xml";
 
         List<Employee> employees = new List<Employee>()
         {

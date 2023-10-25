@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task 1 XML serialization", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task 1 Json serialization", "Task 1 Json serialization\Task 1 Json serialization.csproj", "{5718B90E-A48A-496C-903D-B6B253B69994}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task 2 Custom binary serializer", "Task 2 Custom binary serializer\Task 2 Custom binary serializer.csproj", "{47EF2905-7F5E-4D6E-8617-2A471E3FF357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5718B90E-A48A-496C-903D-B6B253B69994}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5718B90E-A48A-496C-903D-B6B253B69994}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5718B90E-A48A-496C-903D-B6B253B69994}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47EF2905-7F5E-4D6E-8617-2A471E3FF357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47EF2905-7F5E-4D6E-8617-2A471E3FF357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47EF2905-7F5E-4D6E-8617-2A471E3FF357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47EF2905-7F5E-4D6E-8617-2A471E3FF357}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
