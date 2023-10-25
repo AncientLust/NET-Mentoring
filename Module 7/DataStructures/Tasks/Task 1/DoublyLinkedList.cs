@@ -11,6 +11,18 @@ public partial class DoublyLinkedList<T> : IDoublyLinkedList<T>
 
     public int Length => GetLength();
 
+    private void AddToEnd(Node currentNode, Node previousNode, T data)
+    {
+        if (currentNode is null)
+        {
+            previousNode.Next = new Node(data, previousNode);
+        }
+        else
+        {
+            AddToEnd(currentNode.Next, currentNode, data);
+        }
+    }
+
     private int GetLength()
     {
         if (HeadNode is null) return 0;
@@ -35,7 +47,7 @@ public partial class DoublyLinkedList<T> : IDoublyLinkedList<T>
         }
         else
         {
-            HeadNode.AddToEnd(HeadNode, data);
+            AddToEnd(HeadNode.Next, HeadNode,  data);
         }
     }
 
@@ -103,6 +115,12 @@ public partial class DoublyLinkedList<T> : IDoublyLinkedList<T>
                 }
                 else
                 {
+                    if (currentNode.Next is null)
+                    {
+                        currentNode.Previous.Next = null;
+                        return;
+                    }
+
                     currentNode.Previous.Next = currentNode.Next;
                     if (currentNode.Next is not null)
                     {
