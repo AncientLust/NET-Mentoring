@@ -1,4 +1,5 @@
-﻿using OOP.Interfaces;
+﻿using Newtonsoft.Json;
+using OOP.Interfaces;
 
 namespace OOP;
 
@@ -6,8 +7,10 @@ internal class DocumentCard
 {
     public ulong CardNumber { get; set; }
     public EDocumentType Type { get; set; }
-    public Dictionary<string, IInfo> InformationDict { get; set; } = new ();
-    
+
+    //[JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)] // It's took a while
+    public Dictionary<string, IInfo> InformationDict { get; set; }
+
     public DocumentCard() {}
 
     public DocumentCard(ulong cardNumber, EDocumentType documentType, List<IInfo> infoAttribute)
@@ -19,6 +22,7 @@ internal class DocumentCard
 
     private void PopulateInformationDict(List<IInfo> infoAttribute)
     {
+        InformationDict = new();
         foreach (var attribute in infoAttribute)
         {
             if (InformationDict.ContainsKey(attribute.InfoName))

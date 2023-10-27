@@ -4,9 +4,11 @@ namespace OOP.InfoAttributes;
 
 internal class Authors : IInfo
 {
-    public string InfoName { get; }
-    public object InfoValue { get; }
-    string IInfo.InfoStringValue => string.Join(", ", (List<string>)InfoValue);
+    public string InfoName { get; set; }
+    public object InfoValue { get; set; }
+    public string InfoStringValue { get; set; }
+
+    public Authors() {}
 
     public Authors(List<string> authors)
     {
@@ -15,5 +17,6 @@ internal class Authors : IInfo
 
         InfoValue = authors;
         InfoName = GetType().Name;
+        InfoStringValue = string.Join(", ", (List<string>)InfoValue);
     }
 }

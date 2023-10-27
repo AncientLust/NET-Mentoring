@@ -9,9 +9,9 @@ internal class DocumentService
 
     public int DocumentCount => storage.Count;
 
-    public DocumentService(IDocumentRepository storageProvider)
+    public DocumentService(IDocumentRepository documentRepository)
     {
-        this.documentRepository = storageProvider;
+        this.documentRepository = documentRepository;
         storage = this.documentRepository.Load();
     }
 

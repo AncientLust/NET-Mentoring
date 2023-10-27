@@ -1,11 +1,20 @@
 ﻿using OOP.Interfaces;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace OOP;
 
 internal class FileDocumentRepository : IDocumentRepository
 {
     private string filePath = "JsonCards/";
+    private JsonSerializerSettings jsonSettings = new();
+
+    public FileDocumentRepository()
+    {
+        jsonSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
+    }
 
     public List<DocumentCard> Load()
     {
@@ -17,7 +26,7 @@ internal class FileDocumentRepository : IDocumentRepository
         foreach (var file in Directory.GetFiles(filePath, "*.json"))
         {
             var jsonString = File.ReadAllText(file);
-            var documentCard = JsonSerializer.Deserialize<DocumentCard>(jsonString);
+            var documentCard = JsonConvert.DeserializeObject<DocumentCard>(jsonString, jsonSettings);
 
             if (documentCard is not null)
                 result.Add(documentCard);
@@ -32,7 +41,13 @@ internal class FileDocumentRepository : IDocumentRepository
             Directory.CreateDirectory(filePath);
 
         var fileFullPath = filePath + $"{documentCard.Type}_#{documentCard.CardNumber}.json";
-        var jsonString = JsonSerializer.Serialize(documentCard);
+
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
+
+        var jsonString = JsonConvert.SerializeObject(documentCard, Formatting.Indented, jsonSettings);
         File.WriteAllText(fileFullPath, jsonString);
     }
 }

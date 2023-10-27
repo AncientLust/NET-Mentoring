@@ -4,9 +4,11 @@ namespace OOP.InfoAttributes;
 
 internal class Title : IInfo
 {
-    public string InfoName { get; }
-    public object InfoValue { get; }
+    public string InfoName { get; set; }
+    public object InfoValue { get; set; }
     public string InfoStringValue => (string)InfoValue;
+
+    public Title() {}
 
     public Title(string title)
     {
