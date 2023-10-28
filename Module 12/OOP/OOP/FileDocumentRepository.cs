@@ -1,53 +1,81 @@
 ﻿using OOP.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Caching.Memory;
+using OOP.Enums;
 
 namespace OOP;
 
 internal class FileDocumentRepository : IDocumentRepository
 {
-    private string filePath = "JsonCards/";
-    private JsonSerializerSettings jsonSettings = new();
+    private const string FilePath = "JsonCards/";
+    private const string SearchPattern = "*.json";
+    private readonly JsonSerializerSettings _jsonSettings;
+    private readonly IMemoryCache _cache;
 
-    public FileDocumentRepository()
+    public FileDocumentRepository(IMemoryCache cache)
     {
-        jsonSettings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-    }
-
-    public List<DocumentCard> Load()
-    {
-        List<DocumentCard> result = new List<DocumentCard>();
+        _cache = cache;
+        _jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         
-        if (!Directory.Exists(filePath))
-            return result;
-
-        foreach (var file in Directory.GetFiles(filePath, "*.json"))
-        {
-            var jsonString = File.ReadAllText(file);
-            var documentCard = JsonConvert.DeserializeObject<DocumentCard>(jsonString, jsonSettings);
-
-            if (documentCard is not null)
-                result.Add(documentCard);
-        }
-
-        return result;
+        if (!Directory.Exists(FilePath))
+            Directory.CreateDirectory(FilePath);
     }
 
-    public void Add(DocumentCard documentCard)
+    public void Add(IDocumentCard documentCard)
     {
-        if (!Directory.Exists(filePath))
-            Directory.CreateDirectory(filePath);
+        var fileFullPath = FilePath + $"{documentCard.DocumentType}_#{documentCard.CardNumber}.json";
 
-        var fileFullPath = filePath + $"{documentCard.Type}_#{documentCard.CardNumber}.json";
-
-        var settings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-
-        var jsonString = JsonConvert.SerializeObject(documentCard, Formatting.Indented, jsonSettings);
+        var jsonString = JsonConvert.SerializeObject(documentCard, Formatting.Indented, _jsonSettings);
         File.WriteAllText(fileFullPath, jsonString);
+
+        CacheDocumentIfCacheable(documentCard, jsonString, fileFullPath);
+    }
+
+    private void CacheDocumentIfCacheable(IDocumentCard card, string jsonString, string fullFilePath)
+    {
+        if (card is ICacheable cacheable)
+        {
+            var cacheOptions = cacheable.CacheOption;
+            _cache.Set(fullFilePath, jsonString, cacheOptions);
+        }
+    }
+
+    public IDocumentCard? SearchByCardNumber(ulong cardNumber)
+    {
+        foreach (var file in Directory.GetFiles(FilePath, SearchPattern))
+        {
+            var jsonString = _cache.TryGetValue(file, out string? cachedJson) ? cachedJson : File.ReadAllText(file);
+            if (jsonString == null) continue;
+
+            var documentCard = JsonConvert.DeserializeObject<IDocumentCard>(jsonString, _jsonSettings);
+
+            if (documentCard?.CardNumber == cardNumber)
+            {
+                CacheDocumentIfCacheable(documentCard, jsonString, file);
+                return documentCard;
+            }
+        }
+        return null;
+    }
+
+    public IEnumerable<IDocumentCard> SearchByCardInfo(EDocumentInfo info, string value)
+    {
+        foreach (var file in Directory.GetFiles(FilePath, SearchPattern))
+        {
+            var jsonString = _cache.TryGetValue(file, out string? cachedJson) ? cachedJson : File.ReadAllText(file);
+            if (jsonString == null) continue;
+
+            var parsedJson = JObject.Parse(jsonString);
+            var cardInfo = parsedJson[info.ToString()]?.ToString();
+
+            if (cardInfo == null || !cardInfo.Contains(value, StringComparison.OrdinalIgnoreCase)) continue;
+
+            var documentCard = JsonConvert.DeserializeObject<IDocumentCard>(jsonString, _jsonSettings);
+            if (documentCard is null) continue;
+
+            CacheDocumentIfCacheable(documentCard, jsonString, file);
+            yield return documentCard;
+        }
     }
 }

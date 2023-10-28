@@ -1,33 +1,29 @@
-﻿using OOP.Interfaces;
+﻿using OOP.Enums;
+using OOP.Interfaces;
 
 namespace OOP;
 
 internal class DocumentService
 {
-    private List<DocumentCard> storage;
-    private readonly IDocumentRepository documentRepository;
-
-    public int DocumentCount => storage.Count;
+    private readonly IDocumentRepository _documentRepository;
 
     public DocumentService(IDocumentRepository documentRepository)
     {
-        this.documentRepository = documentRepository;
-        storage = this.documentRepository.Load();
+        _documentRepository = documentRepository;
     }
 
-    public void AddDocument(DocumentCard documentCard)
+    public void AddDocument(IDocumentCard documentCard)
     {
-        documentRepository.Add(documentCard);
-        storage.Add(documentCard);
+        _documentRepository.Add(documentCard);
     }
 
-    public List<int> SearchDocument(int docNumber)
+    public IDocumentCard? SearchByCardNumber(ulong docNumber)
     {
-        throw new NotImplementedException();
+        return _documentRepository.SearchByCardNumber(docNumber);
     }
 
-    public List<DocumentCard> GetDocumentCards()
+    public IEnumerable<IDocumentCard> SearchByInfo(EDocumentInfo info, string value)
     {
-        return storage;
+        return _documentRepository.SearchByCardInfo(info, value);
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace OOP.Interfaces;
+﻿using OOP.Enums;
+
+namespace OOP.Interfaces;
 
 internal interface IDocumentRepository
 {
-    public List<DocumentCard> Load();
-    public void Add(DocumentCard documentCard);
+    public void Add(IDocumentCard documentCard);
+    public IDocumentCard? SearchByCardNumber(ulong cardNumber);
+    public IEnumerable<IDocumentCard> SearchByCardInfo(EDocumentInfo info, string value);
 }
