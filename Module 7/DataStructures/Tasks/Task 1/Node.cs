@@ -19,18 +19,5 @@ public partial class DoublyLinkedList<T>
             Data = data; 
             Previous = previousNode;
         }
-
-        public void AddToEnd(Node previousNode, T data)
-        {
-            if (Next is null)
-            {
-                Next = new Node(data, previousNode);
-            }
-            else
-            {
-                Next.AddToEnd(this, data);
-            }
-        }
     }
-
 }
