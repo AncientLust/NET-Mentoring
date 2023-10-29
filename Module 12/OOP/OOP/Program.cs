@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OOP.DocumentTypes;
 using OOP.Enums;
 using OOP.Interfaces;
+using OOP.Services;
 
 namespace OOP;
 
@@ -32,49 +32,12 @@ public class Program
 
     private static void AddInitializationDocuments(DocumentService documentService)
     {
-        var book = new Book(
-            1,
-            1,
-            "Book Title",
-            "BookAuthor1, BookAuthor2",
-            new DateTime(2001, 1, 1),
-            50,
-            "BookPublisher"
-        );
+        var dataSource = new DataSource();
 
-        var localizedBook = new LocalizedBook(
-            2,
-            2,
-            "Localized Book Title",
-            "LocalizedBookAuthor1, LocalizedBookAuthorAuthor2",
-            new DateTime(2001, 1, 1),
-            50,
-            "LocalPublisher",
-            "OriginalPublisher",
-            "LocalizationCountry"
-        );
-
-        var patent = new Patent(
-            3,
-            "Patent Title",
-            "PatentAuthor1, PatentAuthorAuthor2",
-            new DateTime(2003, 3, 3),
-            new DateTime(2023, 3, 3),
-            12345678
-        );
-
-        var magazine = new Magazine(
-            4,
-            "Magazine Title",
-            "MagazinePublisher",
-            1,
-            new DateTime(2004, 4, 4)
-        );
-
-        documentService.AddDocument(book);
-        documentService.AddDocument(localizedBook);
-        documentService.AddDocument(patent);
-        documentService.AddDocument(magazine);
+        documentService.AddDocument(dataSource.Book);
+        documentService.AddDocument(dataSource.LocalizedBook);
+        documentService.AddDocument(dataSource.Patent);
+        documentService.AddDocument(dataSource.Magazine);
     }
 
     private static void PrintCardsInfo(string header, List<IDocumentCard> cards)

@@ -1,7 +1,7 @@
 ﻿using OOP.Enums;
 using OOP.Interfaces;
 
-namespace OOP;
+namespace OOP.Services;
 
 internal class DocumentService
 {
