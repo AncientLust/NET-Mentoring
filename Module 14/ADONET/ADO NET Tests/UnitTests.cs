@@ -1,6 +1,6 @@
 namespace ADO_NET_Tests
 {
-    public class UnitTest1
+    public class UnitTests
     {
         [Fact]
         public void Test1()

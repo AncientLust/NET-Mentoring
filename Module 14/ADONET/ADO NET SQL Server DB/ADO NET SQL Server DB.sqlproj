@@ -3,16 +3,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>SQL_Server_DB</Name>
+    <Name>ADO_NET_SQL_Server_DB</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{5465dd6b-dc3a-4c84-9a1a-b94899c2e7ca}</ProjectGuid>
+    <ProjectGuid>{1c8bb1f7-f726-4f4f-a7bc-b133f5ff04f9}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>SQL_Server_DB</RootNamespace>
-    <AssemblyName>SQL_Server_DB</AssemblyName>
+    <RootNamespace>ADO_NET_SQL_Server_DB</RootNamespace>
+    <AssemblyName>ADO_NET_SQL_Server_DB</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
@@ -57,12 +57,18 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Publishing" />
+    <Folder Include="Stored procedures" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\Order.sql" />
+    <Build Include="Stored procedures\DeleteOrdersByFilter.sql" />
+    <Build Include="Stored procedures\SelectOrdersByFilter.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Product.sql" />
-    <Build Include="Tables\Order.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ado_module_db.publish.xml" />
+    <None Include="Publishing\ado_module_db.publish.xml" />
   </ItemGroup>
 </Project>

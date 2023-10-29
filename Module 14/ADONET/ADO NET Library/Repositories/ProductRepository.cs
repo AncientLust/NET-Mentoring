@@ -1,58 +1,144 @@
-﻿using ADONET.Models;
-using System.Data.SqlClient;
+﻿using ADO_NET_Library.Interfaces;
+using ADONET.Models;
 using Microsoft.Data.SqlClient;
 
-namespace ADONET.Repositories;
+namespace ADO_NET_Library.Repositories;
 
 internal class ProductRepository
 {
-    private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ado_module_db;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+    private readonly IDatabaseConnector _databaseConnector;
 
-    public void Insert()
+    public ProductRepository(IDatabaseConnector databaseConnector)
     {
-        using SqlConnection connection = new SqlConnection(connectionString);
-        connection.Open();
-        string sql = """
-                     INSERT INTO dbo.product
-                     (Name, Description, Weight, Height, Width, Length)
-                     VALUES (
-                        @Name,
-                        @Description,
-                        @Weight,
-                        @Height,
-                        @Width,
-                        @Length
-                     )
-                     """;
-
-        using SqlCommand command = new SqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@Name", "Product1");
-        command.Parameters.AddWithValue("@Description", "Description1");
-        command.Parameters.AddWithValue("@Weight", 0);
-        command.Parameters.AddWithValue("@Height", 0);
-        command.Parameters.AddWithValue("@Width",0);
-        command.Parameters.AddWithValue("@Length", 0);
-
-        int rowsAffected = command.ExecuteNonQuery();
-
-        if (rowsAffected == 0)
-            throw new Exception("Something went wrong during insertion");
-
-        //throw new NotImplementedException();
+        _databaseConnector = databaseConnector;
     }
 
-    public void Update(int productId, Product product)
+    public void Insert(Product product)
     {
-        throw new NotImplementedException();
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = """
+                           INSERT INTO dbo.product
+                           (Id, Name, Description, Weight, Height, Width, Length)
+                           VALUES (
+                              @Id,
+                              @Name,
+                              @Description,
+                              @Weight,
+                              @Height,
+                              @Width,
+                              @Length
+                           )
+                           """;
+
+        using SqlCommand command = new (sql, connection);
+        command.Parameters.AddWithValue("@Id", product.Id);
+        command.Parameters.AddWithValue("@Name", product.Name);
+        command.Parameters.AddWithValue("@Description", product.Description);
+        command.Parameters.AddWithValue("@Weight", product.Weight);
+        command.Parameters.AddWithValue("@Height", product.Height);
+        command.Parameters.AddWithValue("@Width", product.Width);
+        command.Parameters.AddWithValue("@Length", product.Length);
+
+        command.ExecuteNonQuery();
     }
 
-    public void Delete(int orderId)
+    public void Update(Product product)
     {
-        throw new NotImplementedException();
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = """
+                           UPDATE dbo.product
+                           SET
+                               Name = @Name,
+                               Description = @Description,
+                               Weight = @Weight,
+                               Height = @Height,
+                               Width = @Width,
+                               Length = @Length
+                           WHERE Id = @Id
+                           """;
+
+        using SqlCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@Id", product.Id);
+        command.Parameters.AddWithValue("@Name", product.Name);
+        command.Parameters.AddWithValue("@Description", product.Description);
+        command.Parameters.AddWithValue("@Weight", product.Weight);
+        command.Parameters.AddWithValue("@Height", product.Height);
+        command.Parameters.AddWithValue("@Width", product.Width);
+        command.Parameters.AddWithValue("@Length", product.Length);
+
+        command.ExecuteNonQuery();
     }
 
-    public List<Product> Select()
+    public void Delete(int productId)
     {
-        throw new NotImplementedException();
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "DELETE dbo.product WHERE Id = @Id";
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@Id", productId);
+        command.ExecuteNonQuery();
+    }
+
+    public List<Product> SelectAll()
+    {
+        List<Product> products = new ();
+
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "SELECT * FROM dbo.product";
+
+        using var command = new SqlCommand(sql, connection);
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            var product = new Product
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                Name = reader.GetString(reader.GetOrdinal("Name")),
+                Description = reader.GetString(reader.GetOrdinal("Description")),
+                Weight = reader.GetFloat(reader.GetOrdinal("Weight")), 
+                Height = reader.GetFloat(reader.GetOrdinal("Height")), 
+                Width = reader.GetFloat(reader.GetOrdinal("Width")),   
+                Length = reader.GetFloat(reader.GetOrdinal("Length"))  
+            };
+
+            products.Add(product);
+        }
+
+        return products;
+    }
+
+    public Product? SelectById(int productId)
+    {
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "SELECT * FROM dbo.product WHERE Id = @Id";
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@Id", productId);
+        using var reader = command.ExecuteReader();
+
+        if (!reader.Read()) return null;
+        var product = new Product
+        {
+            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            Description = reader.GetString(reader.GetOrdinal("Description")),
+            Weight = reader.GetFloat(reader.GetOrdinal("Weight")),
+            Height = reader.GetFloat(reader.GetOrdinal("Height")),
+            Width = reader.GetFloat(reader.GetOrdinal("Width")),
+            Length = reader.GetFloat(reader.GetOrdinal("Length"))
+        };
+
+        return product;
     }
 }
