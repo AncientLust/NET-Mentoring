@@ -1,10 +1,12 @@
-﻿using ADO_NET_Library.Interfaces;
-using ADONET.Models;
+﻿using System.Data;
+using System.Reflection.PortableExecutable;
+using ADO_NET_Library.Interfaces;
+using ADO_NET_Library.Models;
 using Microsoft.Data.SqlClient;
 
 namespace ADO_NET_Library.Repositories;
 
-internal class ProductRepository
+public class ProductRepository
 {
     private readonly IDatabaseConnector _databaseConnector;
 
@@ -70,19 +72,10 @@ internal class ProductRepository
         command.Parameters.AddWithValue("@Width", product.Width);
         command.Parameters.AddWithValue("@Length", product.Length);
 
-        command.ExecuteNonQuery();
-    }
+        int updatedRecords = command.ExecuteNonQuery();
 
-    public void Delete(int productId)
-    {
-        using var connector = _databaseConnector;
-        var connection = _databaseConnector.OpenConnection();
-
-        const string sql = "DELETE dbo.product WHERE Id = @Id";
-
-        using var command = new SqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@Id", productId);
-        command.ExecuteNonQuery();
+        if (updatedRecords == 0) 
+            throw new ArgumentException($"Non existent ProductId {product.Id}");
     }
 
     public List<Product> SelectAll()
@@ -94,24 +87,47 @@ internal class ProductRepository
 
         const string sql = "SELECT * FROM dbo.product";
 
-        using var command = new SqlCommand(sql, connection);
-        using var reader = command.ExecuteReader();
+        // Disconnected model realization
 
-        while (reader.Read())
-        {
-            var product = new Product
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                Name = reader.GetString(reader.GetOrdinal("Name")),
-                Description = reader.GetString(reader.GetOrdinal("Description")),
-                Weight = reader.GetFloat(reader.GetOrdinal("Weight")), 
-                Height = reader.GetFloat(reader.GetOrdinal("Height")), 
-                Width = reader.GetFloat(reader.GetOrdinal("Width")),   
-                Length = reader.GetFloat(reader.GetOrdinal("Length"))  
-            };
+        using SqlDataAdapter adapter = new(sql, connection);
+        var ds = new DataSet();
+        adapter.Fill(ds, nameof(Product));
 
-            products.Add(product);
-        }
+        var productTable = ds.Tables[nameof(Product)];
+        if (productTable is null) return products;
+
+        products.AddRange(from DataRow row in productTable.Rows
+                          select new Product
+                          {
+                              Id = Convert.ToInt32(row["Id"]),
+                              Name = row["Name"].ToString() ?? string.Empty,
+                              Description = row["Description"].ToString() ?? string.Empty,
+                              Weight = Convert.ToSingle(row["Weight"]),
+                              Height = Convert.ToSingle(row["Height"]),
+                              Width = Convert.ToSingle(row["Width"]),
+                              Length = Convert.ToSingle(row["Length"])
+                          });
+
+        // Connected model realization
+
+        //using var command = new SqlCommand(sql, connection);
+        //using var reader = command.ExecuteReader();
+
+        //while (reader.Read())
+        //{
+        //    var product = new Product
+        //    {
+        //        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //        Name = reader.GetString(reader.GetOrdinal("Name")),
+        //        Description = reader.GetString(reader.GetOrdinal("Description")),
+        //        Weight = reader.GetFloat(reader.GetOrdinal("Weight")),
+        //        Height = reader.GetFloat(reader.GetOrdinal("Height")),
+        //        Width = reader.GetFloat(reader.GetOrdinal("Width")),
+        //        Length = reader.GetFloat(reader.GetOrdinal("Length"))
+        //    };
+
+        //    products.Add(product);
+        //}
 
         return products;
     }
@@ -140,5 +156,32 @@ internal class ProductRepository
         };
 
         return product;
+    }
+
+    public void DeleteById(int productId)
+    {
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "DELETE dbo.product WHERE Id = @Id";
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@Id", productId);
+
+        int updatedRecords = command.ExecuteNonQuery();
+
+        if (updatedRecords == 0)
+            throw new ArgumentException($"Non existent ProductId {productId}");
+    }
+
+    public void DeleteAll()
+    {
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "DELETE dbo.product";
+
+        using var command = new SqlCommand(sql, connection);
+        command.ExecuteNonQuery();
     }
 }

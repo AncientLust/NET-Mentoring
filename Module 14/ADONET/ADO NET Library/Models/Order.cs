@@ -1,8 +1,8 @@
 ﻿using ADO_NET_Library.Enums;
 
-namespace ADONET.Models;
+namespace ADO_NET_Library.Models;
 
-internal class Order
+public class Order
 {
     public int Id { get; set; }
     public EOrderStatus Status { get; set; }

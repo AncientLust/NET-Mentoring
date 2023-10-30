@@ -1,6 +1,6 @@
 ﻿namespace ADO_NET_Library.Enums;
 
-internal enum EOrderStatus
+public enum EOrderStatus
 {
     NotStarted,
     Loading,

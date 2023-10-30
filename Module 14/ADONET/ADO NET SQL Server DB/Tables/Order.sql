@@ -5,5 +5,6 @@
     [CreatedDate] DATETIME NOT NULL, 
     [UpdatedDate] DATETIME NOT NULL, 
     [ProductId] INT NOT NULL, 
-    CONSTRAINT [FK_Order_Product] FOREIGN KEY ([ProductId]) REFERENCES [Product]([Id])
+    CONSTRAINT [FK_Order_Product] FOREIGN KEY ([ProductId]) REFERENCES [Product]([Id]),
+    CONSTRAINT [CK_Order_Status] CHECK ([Status] IN ('NotStarted', 'Loading', 'InProgress', 'Arrived', 'Unloading', 'Cancelled', 'Done'))
 )

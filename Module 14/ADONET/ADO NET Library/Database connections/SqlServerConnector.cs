@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ADO_NET_Library.Database_connections;
 
-internal class SqlServerConnector : IDatabaseConnector
+public class SqlServerConnector : IDatabaseConnector
 {
     private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ado_module_db;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
     private SqlConnection? _connection;

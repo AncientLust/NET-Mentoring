@@ -1,12 +1,12 @@
 ﻿using System.Data;
 using ADO_NET_Library.Enums;
 using ADO_NET_Library.Interfaces;
-using ADONET.Models;
+using ADO_NET_Library.Models;
 using Microsoft.Data.SqlClient;
 
 namespace ADO_NET_Library.Repositories;
 
-internal class OrderRepository
+public class OrderRepository
 {
     private readonly IDatabaseConnector _databaseConnector;
 
@@ -63,19 +63,11 @@ internal class OrderRepository
         command.Parameters.AddWithValue("@CreatedDate", order.CreatedDate);
         command.Parameters.AddWithValue("@UpdatedDate", order.UpdatedDate);
         command.Parameters.AddWithValue("@ProductId", order.ProductId);
-        command.ExecuteNonQuery();
-    }
+        
+        var updatedRecords = command.ExecuteNonQuery();
 
-    public void Delete(int orderId)
-    {
-        using var connector = _databaseConnector;
-        var connection = _databaseConnector.OpenConnection();
-
-        const string sql = "DELETE [dbo].[order] WHERE Id = @Id";
-
-        using var command = new SqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@Id", orderId);
-        command.ExecuteNonQuery();
+        if (updatedRecords == 0)
+            throw new ArgumentException($"Non existent OrderId {order.Id}");
     }
 
     public List<Order> SelectAll()
@@ -87,22 +79,43 @@ internal class OrderRepository
 
         const string sql = "SELECT * FROM [dbo].[order]";
 
-        using var command = new SqlCommand(sql, connection);
-        using var reader = command.ExecuteReader();
+        // Disconnected model realization
 
-        while (reader.Read())
-        {
-            var order = new Order
+        using SqlDataAdapter adapter = new(sql, connection);
+        var ds = new DataSet();
+        adapter.Fill(ds, nameof(Order));
+
+        var orderTable = ds.Tables[nameof(Order)];
+        if (orderTable is null) return orders;
+
+        orders.AddRange(from DataRow row in orderTable.Rows
+            select new Order
             {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                Status = (EOrderStatus) Enum.Parse(typeof(EOrderStatus), reader.GetString(reader.GetOrdinal("Status"))),
-                CreatedDate = reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
-                UpdatedDate = reader.GetDateTime(reader.GetOrdinal("UpdatedDate")),
-                ProductId = reader.GetInt32(reader.GetOrdinal("ProductId"))
-            };
+                Id = Convert.ToInt32(row["Id"]),
+                Status = (EOrderStatus)Enum.Parse(typeof(EOrderStatus), row["Status"].ToString()),
+                CreatedDate = Convert.ToDateTime(row["CreatedDate"]),
+                UpdatedDate = Convert.ToDateTime(row["UpdatedDate"]),
+                ProductId = Convert.ToInt32(row["ProductId"])
+            });
 
-            orders.Add(order);
-        }
+        // Connected model realization
+
+        //using var command = new SqlCommand(sql, connection);
+        //using var reader = command.ExecuteReader();
+
+        //while (reader.Read())
+        //{
+        //    var order = new Order
+        //    {
+        //        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //        Status = (EOrderStatus) Enum.Parse(typeof(EOrderStatus), reader.GetString(reader.GetOrdinal("Status"))),
+        //        CreatedDate = reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+        //        UpdatedDate = reader.GetDateTime(reader.GetOrdinal("UpdatedDate")),
+        //        ProductId = reader.GetInt32(reader.GetOrdinal("ProductId"))
+        //    };
+
+        //    orders.Add(order);
+        //}
 
         return orders;
     }
@@ -145,7 +158,7 @@ internal class OrderRepository
         command.CommandType = CommandType.StoredProcedure;
         command.Parameters.AddWithValue("@orderCreatedMonth", orderCreatedMonth ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@orderCreatedYear", orderCreatedYear ?? (object)DBNull.Value);
-        command.Parameters.AddWithValue("@status", status ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@status", status?.ToString() ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@productName", productName ?? (object)DBNull.Value);
         
         using var reader = command.ExecuteReader();
@@ -167,21 +180,60 @@ internal class OrderRepository
         return orders;
     }
 
+    public void DeleteById(int orderId)
+    {
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "DELETE [dbo].[order] WHERE Id = @Id";
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@Id", orderId);
+
+        var updatedRecords = command.ExecuteNonQuery();
+
+        if (updatedRecords == 0)
+            throw new ArgumentException($"Non existent OrderId {orderId}");
+    }
+
+    public void DeleteAll()
+    {
+        using var connector = _databaseConnector;
+        var connection = _databaseConnector.OpenConnection();
+
+        const string sql = "DELETE [dbo].[order]";
+
+        using var command = new SqlCommand(sql, connection);
+        command.ExecuteNonQuery();
+    }
+
     public void DeleteByFilter(int? orderCreatedMonth, int? orderCreatedYear,
         EOrderStatus? status, string? productName)
     {
         using var connector = _databaseConnector;
         var connection = _databaseConnector.OpenConnection();
 
-        var procedureName = EStoredProcedure.DeleteOrdersByFilter.ToString();
-        using var command = new SqlCommand(procedureName, connection);
+        var transaction = connection.BeginTransaction();
 
-        command.CommandType = CommandType.StoredProcedure;
-        command.Parameters.AddWithValue("@orderCreatedMonth", orderCreatedMonth ?? (object)DBNull.Value);
-        command.Parameters.AddWithValue("@orderCreatedYear", orderCreatedYear ?? (object)DBNull.Value);
-        command.Parameters.AddWithValue("@status", status ?? (object)DBNull.Value);
-        command.Parameters.AddWithValue("@productName", productName ?? (object)DBNull.Value);
+        try
+        {
+            var procedureName = EStoredProcedure.DeleteOrdersByFilter.ToString();
+            using var command = new SqlCommand(procedureName, connection, transaction);
 
-        command.ExecuteNonQuery();
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@orderCreatedMonth", orderCreatedMonth ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@orderCreatedYear", orderCreatedYear ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@status", status?.ToString() ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@productName", productName ?? (object)DBNull.Value);
+
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
