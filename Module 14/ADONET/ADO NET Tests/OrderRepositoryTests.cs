@@ -7,7 +7,7 @@ using Xunit;
 namespace ADO_NET_Tests;
 
 [Collection("Repository tests")]
-public class UnitTests
+public class OrderRepositoryTests
 {
     // Create operations
 

@@ -276,7 +276,10 @@ public class ProductRepositoryTests
     {
         var databaseConnector = new SqlServerConnector();
         var productRepository = new ProductRepository(databaseConnector);
+        var orderRepository = new OrderRepository(databaseConnector);
+        orderRepository.DeleteAll();
         productRepository.DeleteAll();
+        
         return productRepository;
     }
 }
