@@ -5,7 +5,7 @@ namespace Library.Database_connections;
 
 public class SqlServerConnector : IDatabaseConnector
 {
-    private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=orm_module_entity_framework;Integrated Security=True;Connect Timeout=30";
+    private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=orm_module_dapper;Integrated Security=True;Connect Timeout=30";
 
     private SqlConnection? _connection;
 
