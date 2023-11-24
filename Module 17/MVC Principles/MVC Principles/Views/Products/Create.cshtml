@@ -1,0 +1,79 @@
+﻿@model MVC_Principles.Models.Product
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@{
+    var categories = ViewData["CategoryID"] as SelectList;
+    var suppliers = ViewData["SupplierID"] as SelectList;
+}
+
+<h1>Create</h1>
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+	    <form action="/ProductsController/Create" method="post">
+		    <div class="form-group">
+			    <label class="control-label">Product Name</label>
+			    <input name="ProductName" class="form-control" />
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">SupplierID</label>
+			    <select name="SupplierID" class="form-control">
+				    @foreach (var item in suppliers)
+				    {
+					    <option value="@item.Value">@item.Text</option>
+				    }
+			    </select>
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">CategoryID</label>
+			    <select name="CategoryID" class="form-control">
+				    @foreach (var item in categories)
+				    {
+					    <option value="@item.Value">@item.Text</option>
+				    }
+			    </select>
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">Quantity Per Unit</label>
+			    <input name="QuantityPerUnit" class="form-control" />
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">Unit Price</label>
+			    <input name="UnitPrice" class="form-control" type="number" step="0.01" />
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">Units In Stock</label>
+			    <input name="UnitsInStock" class="form-control" type="number" />
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">Units On Order</label>
+			    <input name="UnitsOnOrder" class="form-control" type="number" />
+		    </div>
+		    <div class="form-group">
+			    <label class="control-label">Reorder Level</label>
+			    <input name="ReorderLevel" class="form-control" type="number" />
+		    </div>
+		    <div class="form-group form-check">
+			    <label class="form-check-label">
+				    <input name="Discontinued" class="form-check-input" type="checkbox" /> Discontinued
+			    </label>
+		    </div>
+		    <div class="form-group">
+			    <input type="submit" value="Create" class="btn btn-primary" />
+		    </div>
+	    </form>
+    </div>
+</div>
+
+<div>
+	<a href="/Products/Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

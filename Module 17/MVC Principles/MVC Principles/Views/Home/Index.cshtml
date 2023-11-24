@@ -1,0 +1,12 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+	<h1>Welcome to the Home Page</h1>
+	<p>Please choose categories of products</p>
+	<ul>
+		<li><a href="@Url.Action("Index", "Categories")">Categories</a></li>
+		<li><a href="@Url.Action("Index", "Products")">Products</a></li>
+	</ul>
+</div>
